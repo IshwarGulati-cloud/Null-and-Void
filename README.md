@@ -204,18 +204,12 @@ AETHRA solves this by creating an intelligent adaptive career operating system.
 ---
 
 # 👩‍💻 Developed By
-
-Vanshika Lochan
-
-B.E. Artificial Intelligence & Machine Learning
-
-Hackathon Project — 2026
+NULL AND VOID 
+AGENTATHON-2026
 
 ---
 
 # 📸 Demo Preview
-
-(Add screenshots here)
 
 ---
 
