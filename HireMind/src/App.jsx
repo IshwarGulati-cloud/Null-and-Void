@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion'
-import { ArrowLeft, ArrowRight, ArrowUpRight, Plus, Sparkles, Upload, X } from 'lucide-react'
+import { AlertCircle, ArrowLeft, ArrowRight, ArrowUpRight, Plus, Sparkles, Upload, X } from 'lucide-react'
 
 const navigation = [
   { label: 'Archive', path: '/vault' },
@@ -204,6 +204,32 @@ function flattenProfileText(profile) {
 }
 
 function createFallbackAnalysis(description, candidateProfile) {
+  const trimmed = description.trim()
+  const lowercaseText = trimmed.toLowerCase()
+  
+  const commonJobWords = ['job', 'role', 'responsibilities', 'requirements', 'skills', 'experience', 'description', 'engineer', 'developer', 'designer', 'manager', 'intern', 'apply', 'team', 'work', 'product', 'design', 'code', 'software', 'qualification', 'must have', 'nice to have']
+  const hasJobContext = commonJobWords.some((word) => lowercaseText.includes(word)) || lowercaseText.split(/\s+/).length > 25
+  const isInvalid = trimmed.length < 15 || (!hasJobContext && lowercaseText.split(/\s+/).length < 20)
+
+  if (isInvalid) {
+    return normalizeAnalysis({
+      detectedJobRole: 'Invalid Job Description',
+      experienceLevel: 'N/A',
+      requiredSkills: [],
+      preferredSkills: [],
+      atsKeywords: [],
+      matchingSkills: [],
+      missingSkills: [],
+      recruiterIntent: 'No valid job description was provided to analyze.',
+      recruiterFeedback: 'The text provided does not appear to be a valid job listing. Please paste a real job description containing role responsibilities or requirements to get an accurate analysis.',
+      matchScore: 0,
+      hiringProbability: 0,
+      improvementSuggestions: [],
+      strongestProjects: [],
+      resumeFocusAreas: [],
+    })
+  }
+
   const text = description.toLowerCase()
   const profileText = flattenProfileText(candidateProfile)
   const requiredSkills = skillSignals
@@ -620,6 +646,20 @@ async function analyzeJobDescription(jobDescription, candidateProfile) {
 
   const prompt = `Analyze this candidate profile against this job description for resume optimization.
 Compare the candidate profile with the job requirements.
+
+CRITICAL VALIDATION STEP:
+First, evaluate if the Job description provided is a real, coherent job posting, job description, or role requirement text.
+If it is complete gibberish, random text, a greeting, spam, or completely unrelated to a job description (e.g. "hello", "asdfasdf", "random text", "tell me a joke"):
+- Set "detectedJobRole" to "Invalid Job Description"
+- Set "experienceLevel" to "N/A"
+- Set "requiredSkills", "preferredSkills", "atsKeywords", "matchingSkills", "missingSkills", "improvementSuggestions", "strongestProjects", "resumeFocusAreas" to empty arrays: []
+- Set "recruiterIntent" to "No valid job description was provided to analyze."
+- Set "recruiterFeedback" to "The text provided does not appear to be a valid job listing. Please paste a real job description containing role responsibilities or requirements to get an accurate analysis."
+- Set "matchScore" to 0
+- Set "hiringProbability" to 0
+
+Otherwise, perform a standard thorough match analysis and return the normal JSON.
+
 Return only valid JSON with exactly these fields:
 {
   "detectedJobRole": "string",
@@ -2167,6 +2207,37 @@ function ReadingSequence({ stage, stages }) {
 }
 
 function Interpretation({ analysis, meta }) {
+  const isInvalid = analysis.detectedJobRole === 'Invalid Job Description'
+
+  if (isInvalid) {
+    return (
+      <motion.section
+        className="interpretation mt-20"
+        initial={{ opacity: 0, y: 26 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className="border border-red-500/20 bg-red-950/5 rounded-xl p-8 backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-8">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 text-red-400">
+              <AlertCircle className="h-5 w-5 text-red-500" />
+              <span className="archive-caption text-red-400 uppercase tracking-widest text-xs">Validation Failed</span>
+            </div>
+            <h2 className="interpretation-role mt-5 text-red-200/90 leading-relaxed font-light text-xl md:text-2xl">
+              {analysis.recruiterFeedback}
+            </h2>
+            {meta?.note && <p className="analysis-note mt-4 text-white/30 text-xs">{meta.note}</p>}
+          </div>
+          <div className="match-resonance text-red-400 shrink-0">
+            <div className="archive-caption text-red-400/60 text-xs uppercase tracking-widest">Match score</div>
+            <div className="mt-3 text-red-500 font-medium text-5xl">0<span>%</span></div>
+            <small className="text-red-400/50 block mt-1 text-[11px]">0% hiring probability</small>
+          </div>
+        </div>
+      </motion.section>
+    )
+  }
+
   return (
     <motion.section
       className="interpretation mt-20"
