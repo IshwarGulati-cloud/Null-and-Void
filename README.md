@@ -1,6 +1,6 @@
 # AETHRA — Agentic Career Intelligence System
 
-> Your Career Has Memory.
+> Your Career Has Memory. aethra-ai.netlify.app
 
 ---
 
