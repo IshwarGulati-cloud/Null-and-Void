@@ -479,6 +479,139 @@ function createFallbackSimulation(profile, opportunity, resume) {
   })
 }
 
+function createFallbackJobs(query) {
+  const normalizedQuery = query.toLowerCase()
+  if (normalizedQuery.includes('design') || normalizedQuery.includes('ux') || normalizedQuery.includes('ui')) {
+    return [
+      {
+        title: 'Senior Product Designer (Intelligent Interfaces)',
+        company: 'Design Lab AI',
+        location: 'Bengaluru, India (Hybrid)',
+        description: 'Lead the design of next-generation conversational workspaces and generative dashboards. Partner with engineering to ship React prototypes.',
+        salary: '₹18,00,000 - ₹24,00,000',
+        url: 'https://adzuna.com',
+        created: 'Today',
+      },
+      {
+        title: 'Interaction Designer (Framer & React)',
+        company: 'Nova Creative Systems',
+        location: 'Remote (India)',
+        description: 'Shape the sensory layout of AI-assisted creative software. Build interactive models and polish motion styles in design systems.',
+        salary: '₹14,00,000 - ₹18,00,000',
+        url: 'https://adzuna.com',
+        created: 'Yesterday',
+      },
+      {
+        title: 'UX/UI Designer (Emerging Tech)',
+        company: 'HoloScale Technologies',
+        location: 'Mumbai, India',
+        description: 'Translate complex distributed data architectures into smooth, accessible user journeys. Prioritize clarity and micro-interactions.',
+        salary: '₹12,0,000 - ₹16,0,000',
+        url: 'https://adzuna.com',
+        created: '3 days ago',
+      },
+    ]
+  } else if (normalizedQuery.includes('frontend') || normalizedQuery.includes('front-end') || normalizedQuery.includes('react') || normalizedQuery.includes('engineer') || normalizedQuery.includes('developer')) {
+    return [
+      {
+        title: 'Frontend Experience Engineer (React/Tailwind)',
+        company: 'Veloce AI',
+        location: 'Bengaluru, India (Hybrid)',
+        description: 'Build fast, responsive interfaces using modern React, Tailwind CSS, and Vite. Collaborate closely with experience designers on interactive animations.',
+        salary: '₹16,00,000 - ₹22,00,000',
+        url: 'https://adzuna.com',
+        created: 'Today',
+      },
+      {
+        title: 'Software Developer (AI Product Prototyping)',
+        company: 'Nexus Creative Labs',
+        location: 'Remote (India)',
+        description: 'Prototype intelligent consumer products. Implement generative model pipelines and build client-side dashboard experiences in TypeScript.',
+        salary: '₹15,00,000 - ₹20,00,000',
+        url: 'https://adzuna.com',
+        created: 'Yesterday',
+      },
+      {
+        title: 'React Product Engineer',
+        company: 'Synapse Core',
+        location: 'New Delhi, India (On-site)',
+        description: 'Join a cross-disciplinary product team engineering human-AI collaboration platforms. Focus on accessibility, performance, and state integrity.',
+        salary: '₹12,00,000 - ₹16,00,000',
+        url: 'https://adzuna.com',
+        created: '3 days ago',
+      },
+    ]
+  } else {
+    return [
+      {
+        title: 'Digital Product Specialist',
+        company: 'Aether Cloud Systems',
+        location: 'Bengaluru, India (Hybrid)',
+        description: 'Help steer intelligent product features from early concepts to launch. Translate user observations into structured development requirements.',
+        salary: '₹10,00,000 - ₹15,00,000',
+        url: 'https://adzuna.com',
+        created: 'Today',
+      },
+      {
+        title: 'Associate Product Engineer',
+        company: 'NextGen Scale',
+        location: 'Remote (India)',
+        description: 'Contribute to building client-facing portal applications. Maintain design systems compliance and troubleshoot complex interactive interfaces.',
+        salary: '₹8,00,000 - ₹12,00,000',
+        url: 'https://adzuna.com',
+        created: 'Yesterday',
+      },
+    ]
+  }
+}
+
+async function fetchAdzunaJobs(query, country = 'in') {
+  const appId = import.meta.env.VITE_ADZUNA_APP_ID
+  const appKey = import.meta.env.VITE_ADZUNA_APP_KEY
+
+  if (!appId || !appKey || appId === 'your_adzuna_app_id' || appKey === 'your_adzuna_app_key') {
+    return {
+      jobs: createFallbackJobs(query),
+      source: 'simulated',
+      note: 'Adzuna API credentials are not set. Showing simulated live market opportunities.',
+    }
+  }
+
+  try {
+    const url = `https://api.adzuna.com/v1/api/jobs/${country}/search/1?app_id=${appId}&app_key=${appKey}&what=${encodeURIComponent(query)}&results_per_page=5`
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error(`Adzuna API request failed with status ${response.status}`)
+    }
+    const data = await response.json()
+    const jobs = (data.results || []).map((job) => ({
+      title: job.title.replace(/<\/?[^>]+(>|$)/g, ''),
+      company: job.company?.display_name || 'Confidential Company',
+      location: job.location?.display_name || 'Remote / Multiple Locations',
+      description: job.description.replace(/<\/?[^>]+(>|$)/g, '').slice(0, 180) + '...',
+      salary: job.salary_min && job.salary_max
+        ? `₹${Math.round(job.salary_min).toLocaleString()} - ₹${Math.round(job.salary_max).toLocaleString()}`
+        : job.salary_min
+          ? `From ₹${Math.round(job.salary_min).toLocaleString()}`
+          : 'Salary not specified',
+      url: job.redirect_url,
+      created: job.created ? new Date(job.created).toLocaleDateString() : 'Recent',
+    }))
+
+    return {
+      jobs,
+      source: 'adzuna',
+      note: `Fetched real-time opportunities matching "${query}" from Adzuna.`,
+    }
+  } catch (error) {
+    return {
+      jobs: createFallbackJobs(query),
+      source: 'simulated',
+      note: `Adzuna API fetch failed (${error.message}). Showing simulated opportunities instead.`,
+    }
+  }
+}
+
 async function runRecruiterSimulation(profile, opportunity, resume) {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY
   const fallbackResult = createFallbackSimulation(profile, opportunity, resume)
@@ -1783,6 +1916,7 @@ function RecruiterSimulation({ navigate }) {
   const [stage, setStage] = useState(0)
   const [review, setReview] = useState(null)
   const [meta, setMeta] = useState(null)
+  const [adzunaData, setAdzunaData] = useState(null)
   const [message, setMessage] = useState('')
 
   useEffect(() => {
@@ -1816,11 +1950,17 @@ function RecruiterSimulation({ navigate }) {
 
     setReview(null)
     setMeta(null)
+    setAdzunaData(null)
     setMessage('')
     setStage(0)
     setState('simulating')
 
     const { note, result, source } = await runRecruiterSimulation(profile, opportunity, forged.resume)
+    
+    const query = opportunity?.analysis?.detectedJobRole || profile.personal?.headline || 'Software Engineer'
+    const jobsResponse = await fetchAdzunaJobs(query)
+    setAdzunaData(jobsResponse)
+
     setReview(result)
     setMeta({ note, source })
     setState('complete')
@@ -1877,7 +2017,7 @@ function RecruiterSimulation({ navigate }) {
         )}
 
         {state === 'complete' && review && (
-          <RecruiterReview key="review" meta={meta} review={review} />
+          <RecruiterReview key="review" meta={meta} review={review} adzunaData={adzunaData} />
         )}
       </AnimatePresence>
     </motion.main>
@@ -1901,7 +2041,7 @@ function SimulationSequence({ stage }) {
   )
 }
 
-function RecruiterReview({ meta, review }) {
+function RecruiterReview({ meta, review, adzunaData }) {
   return (
     <motion.section className="recruiter-review mt-16" initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
       <div className="review-brief">
@@ -1933,6 +2073,71 @@ function RecruiterReview({ meta, review }) {
           <button type="button">Improve Resume Based on Feedback</button>
         </article>
       </div>
+
+      {adzunaData && (
+        <div className="adzuna-market-opportunities mt-20 border-t border-white/10 pt-16">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-10">
+            <div>
+              <div className="flex items-center gap-3 text-violet-400">
+                <Sparkles className="h-5 w-5 text-violet-400" />
+                <span className="archive-caption text-violet-400 uppercase tracking-widest text-xs">Live Market Match</span>
+              </div>
+              <h2 className="text-2xl md:text-3xl font-light text-white mt-4">
+                Real-Time Opportunities
+              </h2>
+              <p className="text-white/40 text-xs mt-2">{adzunaData.note}</p>
+            </div>
+            <span className={`text-[10px] uppercase tracking-wider px-3 py-1 rounded-full border shrink-0 h-fit w-fit ${adzunaData.source === 'adzuna' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-violet-500/10 text-violet-400 border-violet-500/20'}`}>
+              {adzunaData.source === 'adzuna' ? 'Adzuna API Live' : 'Demo Stream'}
+            </span>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {adzunaData.jobs.map((job, idx) => (
+              <motion.article 
+                key={idx}
+                className="group relative border border-white/10 bg-white/[0.02] hover:border-violet-500/30 hover:bg-violet-950/[0.05] rounded-xl p-6 transition-all duration-300 flex flex-col justify-between"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.08 }}
+              >
+                <div>
+                  <div className="flex justify-between items-start gap-4">
+                    <span className="text-[10px] uppercase tracking-wider text-white/40">{job.company}</span>
+                    <span className="text-[9px] uppercase tracking-widest text-violet-400 bg-violet-400/5 px-2 py-0.5 rounded-full">{job.created}</span>
+                  </div>
+                  <h3 className="text-lg font-normal text-white mt-3 group-hover:text-violet-300 transition-colors line-clamp-2">
+                    {job.title}
+                  </h3>
+                  <div className="flex flex-wrap gap-x-4 gap-y-2 mt-3 text-xs text-white/50">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400/60" />
+                      {job.location}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-violet-400/60" />
+                      {job.salary}
+                    </span>
+                  </div>
+                  <p className="text-white/40 text-xs mt-4 leading-relaxed line-clamp-3">
+                    {job.description}
+                  </p>
+                </div>
+                
+                <a 
+                  href={job.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="mt-6 inline-flex items-center justify-center gap-2 w-full bg-white/5 group-hover:bg-violet-600 border border-white/10 group-hover:border-violet-500 text-white rounded-lg px-4 py-2.5 text-xs font-medium transition-all duration-300"
+                >
+                  Apply Opportunity
+                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </a>
+              </motion.article>
+            ))}
+          </div>
+        </div>
+      )}
     </motion.section>
   )
 }
