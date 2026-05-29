@@ -2,223 +2,197 @@
 
 > Your Career Has Memory.
 
-AETHRA is a futuristic AI-powered career intelligence platform designed to transform static resumes into adaptive professional identity systems.
+---
 
-Built for hackathons and next-generation recruitment workflows, AETHRA combines agentic AI, immersive interface design, and evidence-backed career analysis to help users understand opportunities, optimize resumes, and simulate recruiter evaluation.
+# 📌 Project Overview
+
+AETHRA is a futuristic AI-powered career intelligence platform that transforms static resumes into adaptive professional identity systems.
+
+The platform allows users to:
+
+* build a structured career archive
+* upload proof-based achievements
+* analyze job opportunities
+* generate ATS-friendly resumes
+* simulate recruiter evaluation
+* identify growth opportunities
+
+AETHRA combines immersive interface design with agentic AI workflows to create a human-centered recruitment experience.
 
 ---
 
-## ✨ Vision
+# ❗ Problem Statement
 
-Traditional resumes are static.
+Modern resumes are static, repetitive, and disconnected from recruiter expectations.
 
-AETHRA introduces a living career intelligence system that:
+Job seekers today:
 
-* understands career evidence
-* analyzes opportunities
-* generates adaptive resumes
-* simulates recruiter evaluation
-* recommends growth paths
+* repeatedly rewrite resumes for every role
+* lack centralized career organization
+* cannot understand recruiter intent
+* struggle to identify missing skills
+* have no intelligent system to personalize applications
 
-Instead of just storing information, AETHRA creates an evolving professional identity.
-
----
-
-# 🚀 Features
-
-## 🧠 Agentic AI Workflow
-
-AETHRA uses multiple AI-inspired agents working together:
-
-* Archive Agent
-* Opportunity Agent
-* Match Agent
-* Resume Agent
-* Recruiter Agent
-* Growth Agent
-* Proof Agent
+AETHRA solves this by creating a living career intelligence system capable of adaptive resume generation, recruiter simulation, and evidence-backed professional storytelling.
 
 ---
 
-## 📂 Career Archive
+# 🛠 Tech Stack Used
 
-Users can create a structured career identity profile with:
-
-* education
-* skills
-* projects
-* certifications
-* internships
-* achievements
-
----
-
-## 📎 Proof-Based Intelligence
-
-Users can upload:
-
-* resumes
-* certificates
-* transcripts
-* internship proofs
-* achievement screenshots
-
-AETHRA extracts structured information from uploaded evidence and strengthens profile credibility.
-
----
-
-## 💼 Opportunity Analyzer
-
-Users can:
-
-* select sample roles
-* paste custom job descriptions
-
-AETHRA analyzes:
-
-* required skills
-* recruiter intent
-* ATS keywords
-* missing skills
-* hiring focus areas
-
----
-
-## 🛠 Resume Forge
-
-AETHRA generates adaptive ATS-friendly resumes based on:
-
-* user profile
-* uploaded evidence
-* target opportunity
-* recruiter expectations
-
----
-
-## 🎯 Recruiter Simulation
-
-Simulates recruiter evaluation by generating:
-
-* shortlist decision
-* hiring probability
-* recruiter feedback
-* red flags
-* interview questions
-* improvement suggestions
-
----
-
-## 📈 Growth Intelligence
-
-AETHRA identifies:
-
-* missing skills
-* learning gaps
-* recommended certifications
-* roadmap suggestions
-
----
-
-# 🧩 Tech Stack
-
-Frontend:
+## Frontend
 
 * React
 * Vite
 * Tailwind CSS
 * Framer Motion
 
-AI:
+## AI & Intelligence
 
 * Gemini API
 * Hybrid Local Intelligence Engine
+* Agentic Workflow Architecture
 
-Storage:
+## Storage
 
 * localStorage
 
-Design:
-
-* Editorial UI
-* Cinematic motion systems
-* Human-centered interaction design
-
-Version Control:
+## Version Control
 
 * Git
 * GitHub
 
 ---
 
-# 🎨 Design Philosophy
+# ⚙ Workflow / Architecture
 
-Unlike traditional AI dashboards, AETHRA is designed as:
+## System Workflow
 
-> A cinematic digital identity experience.
-
-Inspired by:
-
-* editorial design systems
-* immersive portfolios
-* futuristic interfaces
-* creative technology products
-
----
-
-# ⚡ Hybrid Intelligence System
-
-To improve reliability during demos and hackathons, AETHRA uses a hybrid architecture:
-
-* local adaptive intelligence
-* role-aware analysis engines
-* selective Gemini-powered deep reasoning
-
-This ensures the platform remains functional even during API quota failures.
+User Career Archive
+↓
+Proof Upload & Parsing
+↓
+Archive Agent
+↓
+Opportunity Agent
+↓
+Match Agent
+↓
+Resume Forge
+↓
+Recruiter Simulation
+↓
+Growth Intelligence
 
 ---
 
-# 📌 Problem Statement
+## Agentic AI Modules
 
-Modern resumes fail to:
+### Archive Agent
 
-* adapt dynamically
-* represent proof-backed achievements
-* understand recruiter intent
-* personalize career guidance
+Organizes and summarizes user career data.
 
-AETHRA solves this by creating an intelligent adaptive career operating system.
+### Opportunity Agent
+
+Analyzes job descriptions and recruiter intent.
+
+### Match Agent
+
+Compares user profile with target role.
+
+### Resume Agent
+
+Generates adaptive ATS-friendly resumes.
+
+### Recruiter Agent
+
+Simulates recruiter evaluation and feedback.
+
+### Growth Agent
+
+Suggests learning paths and missing skills.
+
+### Proof Agent
+
+Processes uploaded certificates and evidence.
 
 ---
 
-# 🛣 Future Scope
+# 🚀 Setup Instructions
 
-* Real cloud storage integration
+## 1. Clone Repository
+
+```bash
+git clone YOUR_REPOSITORY_LINK
+```
+
+## 2. Open Project Folder
+
+```bash
+cd athera
+```
+
+## 3. Install Dependencies
+
+```bash
+npm install
+```
+
+## 4. Create .env File
+
+```env
+VITE_GEMINI_API_KEY=your_api_key_here
+```
+
+## 5. Run Development Server
+
+```bash
+npm run dev
+```
+
+## 6. Open Browser
+
+```txt
+http://localhost:5173
+```
+
+---
+
+# 👥 Team Details
+
+## Team Name
+
+AETHRA Labs
+
+## Members
+
+*Vanshika Lochan
+*Madhav Priya
+*Ishwar Gulati
+*Ankur Agarwal
+
+## Role Contributions
+
+* Frontend Development
+* AI Workflow Design
+* UI/UX Design
+* Agentic System Architecture
+* Product Concept & Research
+
+
+---
+
+# 🔮 Future Scope
+
+* Cloud storage integration
 * LinkedIn synchronization
-* Live recruiter dashboards
+* Real recruiter dashboards
 * AI interview simulation
-* Multi-language resume generation
-* Portfolio website generation
-* Real-time job discovery
+* Portfolio generation
 * Career analytics engine
-
----
-
-# 👩‍💻 Developed By
-
-Vanshika Lochan
-
-B.E. Artificial Intelligence & Machine Learning
-
-Hackathon Project — 2026
-
----
-
-# 📸 Demo Preview
-
-(Add screenshots here)
+* Multi-language resume generation
 
 ---
 
 # 📜 License
 
-This project is developed for educational and hackathon purposes.
+Developed for educational and hackathon purposes.
